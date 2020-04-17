@@ -1,15 +1,17 @@
-FROM node:12
+FROM node:12-slim
 
-WORKDIR /app 
+EXPOSE 8888
 
-COPY package.json package.json
+WORKDIR /node
 
-COPY . /app
+COPY package*.json ./
 
-RUN yarn install
+RUN mkdir app && chown -R node:node .
 
-EXPOSE 8082
+USER node
 
-RUN yarn global add nodemon 
+RUN npm install && npm cache clean --force
 
-CMD [ "nodemon", "dist/index.js" ]
+WORKDIR /node/app
+
+COPY --chown=node:node . .

@@ -33,15 +33,16 @@ export class ApiServer {
     private registerRoutes(): void {
         this.logger.info('ApiServer', 'registerRoutes', 'Registering routes...');
         this.app.get('/api/test', (req: Request, res: Response, next: Function) => {
-            res.status(200).send('Ok');
+            res.status(200).send('Osssssssssk');
         });
         this.app.use((err: any, req: Request, res: Response, next: any) =>
             res.status(422).send({ error: err.message }));
     }
 
     private startListening() {
-        this.app.listen(process.env.PORT || this.serverConfig.port || 8081, () => {
-            this.logger.info('ApiServer', 'startApp', `Server listening on  ${this.serverConfig.port}`);
+        const port = process.env.PORT || this.serverConfig.port || 8081;
+        this.app.listen(port, () => {
+            this.logger.info('ApiServer', 'startApp', `Server listening on ${port}`);
         });
     }
 }

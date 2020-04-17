@@ -1,10 +1,9 @@
 {
-  "name": "bus-app-node-ts",
+  "name": "json-movies-api",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build-ts": "tsc",
     "start": "concurrently --kill-others \"yarn watch-ts\" \"yarn watch-node\"",
     "watch-node": "nodemon dist/index.js",
     "watch-ts": "tsc -w",
@@ -42,5 +41,5 @@
     "yup": "^0.27.0"
   },
   "author": "Seweryn Markowicz",
-  "license": "ISC"
+  "license": "MIT"
 }

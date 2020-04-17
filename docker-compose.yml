@@ -1,0 +1,12 @@
+version: "2.4"
+services:
+  api:
+    container_name: json-movies-api
+    build: .
+    command: yarn start
+    volumes:
+        - .:/node/app
+        - /node/app/node_modules
+    restart: always
+    ports:
+      - "8888:8888"
