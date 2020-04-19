@@ -1,22 +1,27 @@
 import * as bodyParser from 'body-parser';
 import { Express, Request, Response } from 'express';
 import { ServerConfig } from './config/ServerConfig';
+import { MoviesController } from './http/MoviesController';
 import { ILogger } from './logger/ILogger';
+
 const cors = require('cors');
 
 export class ApiServer {
     private logger: ILogger;
     private app: Express;
     private serverConfig: ServerConfig;
+    private moviesController: MoviesController;
 
     constructor(
         logger: ILogger,
         serverConfig: ServerConfig,
         app: Express,
+        moviesController: MoviesController,
     ) {
         this.logger = logger;
         this.serverConfig = serverConfig;
         this.app = app;
+        this.moviesController = moviesController;
     }
 
     public start() {
@@ -32,9 +37,11 @@ export class ApiServer {
 
     private registerRoutes(): void {
         this.logger.info('ApiServer', 'registerRoutes', 'Registering routes...');
-        this.app.get('/api/test', (req: Request, res: Response, next: Function) => {
-            res.status(200).send('Osssssssssk');
+        this.app.get('/_health', (req: Request, res: Response, next: any) => {
+            res.status(200).send('ok');
         });
+        this.app.get('/movies', this.moviesController.get.bind(this.moviesController));
+        this.app.post('/movies', this.moviesController.post.bind(this.moviesController));
         this.app.use((err: any, req: Request, res: Response, next: any) =>
             res.status(422).send({ error: err.message }));
     }

@@ -5,6 +5,7 @@ import { ILogger } from './logger/ILogger';
 import { Logger } from './logger/Logger';
 import { Types } from './Types';
 import express from 'express';
+import { MoviesController } from './http/MoviesController';
 
 (async () => {
     try {
@@ -14,10 +15,12 @@ import express from 'express';
         const config = await configProvider.import('.', configName);
         const container = initContainer();
         const logger = container.get<ILogger>(Types.Logger);
+        const moviesController = container.get<MoviesController>(Types.MoviesController);
         const server = new ApiServer(
             logger,
             config,
             express(),
+            moviesController,
         );
         server.start();
     } catch (err) {
