@@ -18,7 +18,7 @@ export class Logger implements ILogger {
     }
 
     public error(className: string, method: string, error: any, message?: string | object) {
-        pinoLogger.error(`[${className}@${method}] ${JSON.stringify(error)} ${JSON.stringify(message)}`);
+        pinoLogger.error(`[${className}@${method}] ${error} ${JSON.stringify(message)}`);
     }
 
     public trace(className: string, method: string, error: Error, message?: string | object): void {

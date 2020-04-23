@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { setLocale } from 'yup';
+import { AbstractHttpInput } from '../../http/AbstractHttpInput';
 
 setLocale({
     number: {
@@ -7,22 +8,8 @@ setLocale({
     },
 });
 
-export interface IValidationResult {
-    valid: boolean;
-    errorResult?: IValidationErrorResult[];
-}
-
-export interface IValidationErrorResult {
-    filedName: string;
-    message: string;
-}
-
-export interface IValidableInput {
-    validate(): Promise<IValidationResult>;
-}
-
-export class CreateMovieInput implements IValidableInput {
-    private readonly schema: any;
+export class CreateMovieInput extends AbstractHttpInput {
+    protected readonly schema: any;
 
     constructor(
         public genres: string[],
@@ -34,6 +21,7 @@ export class CreateMovieInput implements IValidableInput {
         public plot: string,
         public posterUrl: string,
     ) {
+        super();
         this.schema = yup.object().shape({
             genres: yup.array().of(yup.string()),
             title: yup.string().required().max(255),
@@ -46,24 +34,21 @@ export class CreateMovieInput implements IValidableInput {
         });
     }
 
-    public async validate(): Promise<IValidationResult> {
-        try {
-            this.schema.validate(this);
-            return Promise.resolve({
-                valid: true,
-            });
-        } catch (err) {
-            console.log(err);
-            return Promise.resolve({
-                valid: false,
-
-            });
-        }
+    public serialize(): any {
+        return {
+            genres: this.genres,
+            title: this.title,
+            year: this.year,
+            runtime: this.runtime,
+            director: this.director,
+            actors: this.actors,
+            plot: this.plot,
+            posterUrl: this.posterUrl,
+        };
     }
 }
 
 /*
-
 - a list of genres (only predefined ones from db file) (required, array of predefined strings)
 - title (required, string, max 255 characters)
 - year (required, number)
