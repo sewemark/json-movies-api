@@ -5,4 +5,6 @@ export const Types = {
     MoviesRespository: Symbol.for('MoviesRespository'),
     MoviesSearchStrategyProvider: Symbol.for('MoviesSearchStrategyProvider'),
     Persiter: Symbol.for('Persiter'),
+    MessageBus: Symbol.for('EventEmitter'),
+    PersiterLock: Symbol.for('PersiterLock'),
 };

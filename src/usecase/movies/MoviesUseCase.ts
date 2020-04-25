@@ -53,10 +53,13 @@ export class MoviesUseCase implements IMoviesUseCase {
     }
 
     public async create(movieInput: CreateMovieInput): Promise<IUseCaseResult> {
+        const movieGenres = await this.moviesRepository.movieGenres();
         const validationResult = await movieInput.validate();
-        if (!validationResult.valid) {
-            this.logger.warn('MoviesUseCase', 'create', 'Invalid input data provided');
-            throw new InvalidInputError(validationResult.errorResults);
+        const valuesValidationResult = await movieInput.validateValues(movieGenres);
+        if (!validationResult.valid || !valuesValidationResult.valid) {
+            this.logger.warn('MoviesUseCase', 'create', 'Invalid movie input schema data');
+            throw new InvalidInputError([...validationResult.errorResults || [],
+            ...valuesValidationResult.errorResults || []]);
         }
         try {
             await this.moviesRepository.create(movieInput);

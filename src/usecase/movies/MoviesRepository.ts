@@ -1,6 +1,5 @@
-import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
-import * as path from 'path';
+import { UnableToCommitChanges } from '../../errors/UnableToCommitChanges';
 import { ILogger } from '../../logger/ILogger';
 import { Types } from '../../Types';
 import { CreateMovieInput } from './CreateMovieInput';
@@ -26,6 +25,7 @@ export interface IMoviesRepository {
     init(): Promise<void>;
     create(createMovieInput: CreateMovieInput): Promise<void>;
     find(): Promise<IMovie[]>;
+    movieGenres(): Promise<string[]>;
 }
 
 @injectable()
@@ -64,7 +64,7 @@ export class MoviesRepository {
             });
         } catch (err) {
             this.logger.error('MoviesRepository', 'create', err, `Unable to create new movie ${createMovieInput}`);
-            throw new UnableToCreateMovieError();
+            throw new UnableToCommitChanges();
         }
     }
 
@@ -73,5 +73,12 @@ export class MoviesRepository {
             await this.init();
         }
         return this.movies;
+    }
+
+    public async movieGenres(): Promise<string[]> {
+        if (!this.inited) {
+            await this.init();
+        }
+        return this.genres;
     }
 }

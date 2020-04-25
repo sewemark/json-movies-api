@@ -6,8 +6,22 @@ import { Logger } from './logger/Logger';
 import { Types } from './Types';
 import express from 'express';
 import { MoviesController } from './http/MoviesController';
+import { IMessageBus } from './infrastructure/IMessageBus';
+import { PersiterLock } from './usecase/movies/PersiterLock';
 
 (async () => {
+    function registerEventListners(logger: ILogger, memoryMessageBus: IMessageBus, persiterLock: PersiterLock) {
+        memoryMessageBus.on('LockDbFile', () => {
+            logger.info(`[Event] LockDbFile`, 'ocurred', `Locking db file`);
+            persiterLock.lock();
+        });
+
+        memoryMessageBus.on('UnlockDbFile', () => {
+            logger.info(`[Event] UnLockDbFile`, 'ocurred', `Unlocking db file`);
+            persiterLock.unlock();
+        });
+    }
+
     try {
         const startupLogger = new Logger();
         const configProvider = new YamlConfigProvider(startupLogger);
@@ -21,6 +35,11 @@ import { MoviesController } from './http/MoviesController';
             config,
             express(),
             moviesController,
+        );
+        registerEventListners(
+            startupLogger,
+            container.get<IMessageBus>(Types.MessageBus),
+            container.get<PersiterLock>(Types.PersiterLock),
         );
         server.start();
     } catch (err) {

@@ -1,14 +1,18 @@
+import { uuid } from 'uuidv4';
 import * as yup from 'yup';
 import { setLocale } from 'yup';
 import { AbstractHttpInput } from '../../http/AbstractHttpInput';
+import { IValidationErrorResult } from '../../http/IValidationErrorResult';
+import { IValidationResult } from '../../http/IValidationResult';
 
 setLocale({
     number: {
-        max: 'Maksymalny rozmiar pola ${max}',
+        max: 'Max field size ${max}',
     },
 });
 
 export class CreateMovieInput extends AbstractHttpInput {
+    public id: string;
     protected readonly schema: any;
 
     constructor(
@@ -32,10 +36,12 @@ export class CreateMovieInput extends AbstractHttpInput {
             plot: yup.string(),
             posterUrl: yup.string().url(),
         });
+        this.id = uuid();
     }
 
     public serialize(): any {
         return {
+            id: this.id,
             genres: this.genres,
             title: this.title,
             year: this.year,
@@ -45,6 +51,25 @@ export class CreateMovieInput extends AbstractHttpInput {
             plot: this.plot,
             posterUrl: this.posterUrl,
         };
+    }
+
+    public validateValues(movieGenres: string[]): Promise<IValidationResult> {
+        const validGenres = this.genres.reduce((prev: boolean, current: string) => {
+            return prev && movieGenres.includes(current);
+        }, true);
+        if (!validGenres) {
+            return Promise.resolve({
+                valid: false,
+                errorResults: [{
+                    fieldName: 'genres',
+                    message: 'genre must be one of predefined values',
+                } as IValidationErrorResult],
+            });
+        } else {
+            return Promise.resolve({
+                valid: true,
+            });
+        }
     }
 }
 
