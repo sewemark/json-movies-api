@@ -1,4 +1,4 @@
-import { IMovie } from '../MoviesRepository';
+import { IMovie } from '../../../models/IMovie';
 import { IMovieFilter } from './IMovieFilter';
 
 export class MovieDurationFilter implements IMovieFilter {

@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { AbstractHttpInput } from '../../http/AbstractHttpInput';
+import { AbstractHttpInput } from '../../../http/AbstractHttpInput';
 
 export class GetByGenreAndDurationInput extends AbstractHttpInput {
     protected readonly schema: any;

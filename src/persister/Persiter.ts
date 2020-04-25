@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
-import * as path from 'path';
-import { UnableToLoadDbDataError } from '../../errors/UnableToLoadDbDataError';
-import { UnableToSaveDbDataError } from '../../errors/UnableToSaveDbDataError';
-import { IMessageBus } from '../../infrastructure/IMessageBus';
-import { ILogger } from '../../logger/ILogger';
-import { Types } from '../../Types';
-import { IDBSchema } from './MoviesRepository';
+import { ServerConfig } from '../config/ServerConfig';
+import { UnableToAccessDbFileError } from '../errors/UnableToAccessDbFileError';
+import { UnableToLoadDbDataError } from '../errors/UnableToLoadDbDataError';
+import { UnableToSaveDbDataError } from '../errors/UnableToSaveDbDataError';
+import { ILogger } from '../logger/ILogger';
+import { Types } from '../Types';
+import { IDBSchema } from './IDBSchema';
 import { PersiterLock } from './PersiterLock';
 
 export interface IPersiter {
@@ -16,30 +16,31 @@ export interface IPersiter {
 
 @injectable()
 export class Persiter implements IPersiter {
-    private readonly moviesPath = path.join(__dirname, '..', '..', '..', 'db', 'db.json');
     private readonly logger: ILogger;
-    private readonly messageBus: IMessageBus;
     private readonly persiterLock: PersiterLock;
     private readonly maxFileAccessRetryCount: number = 5;
+    private readonly serverConfig: ServerConfig;
+
     constructor(
         @inject(Types.Logger) logger: ILogger,
-        @inject(Types.MessageBus) messageBus: IMessageBus,
         @inject(Types.PersiterLock) persiterLock: PersiterLock,
+        @inject(Types.ServerConfig) serverConfig: ServerConfig,
     ) {
         this.logger = logger;
-        this.messageBus = messageBus;
         this.persiterLock = persiterLock;
+        this.serverConfig = serverConfig;
     }
 
     public async load(): Promise<IDBSchema> {
         try {
-            const data = fs.readFileSync(this.moviesPath);
+            const data = fs.readFileSync(this.serverConfig.databaseFilePath);
             return Promise.resolve(JSON.parse(data.toString()) as IDBSchema);
         } catch (err) {
             this.logger.error('Persiter', 'load', err, 'Cannot load data from db file');
             throw new UnableToLoadDbDataError();
         }
     }
+
     public save(dbSchema: IDBSchema, retryCount = 0): void {
         try {
             if (!this.canAccessFile(retryCount) || this.persiterLock.locked) {
@@ -49,22 +50,23 @@ export class Persiter implements IPersiter {
                 }, 100);
                 return;
             }
-            this.messageBus.emit('LockDbFile');
-            fs.writeFileSync(this.moviesPath, JSON.stringify(dbSchema));
-            this.messageBus.emit('UnlockDbFile');
+            this.persiterLock.lock();
+            fs.writeFileSync(this.serverConfig.databaseFilePath, JSON.stringify(dbSchema));
+            this.persiterLock.unlock();
         } catch (err) {
-            this.logger.error('Persiter', 'load', err, 'Cannot load data from db file');
+            this.logger.error('Persiter', 'load', err, 'Cannot save data to db file');
             throw new UnableToSaveDbDataError();
         }
     }
 
     private canAccessFile(retryCount: number): boolean {
         try {
-            fs.accessSync(this.moviesPath);
+            fs.accessSync(this.serverConfig.databaseFilePath);
             return true;
         } catch (err) {
             if (retryCount > this.maxFileAccessRetryCount) {
-                throw new UnableToSaveDbDataError();
+                this.logger.error('Persiter', 'load', err, 'Cannot lock db file within maximum retry count');
+                throw new UnableToAccessDbFileError();
             }
             return false;
         }

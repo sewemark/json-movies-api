@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { IMovieFilter } from '../filters/IMovieFilter';
-import { GetByGenreAndDurationInput } from '../GetByGenreAndDurationInput';
+import { GetByGenreAndDurationInput } from '../inputs/GetByGenreAndDurationInput';
 import { GenreSearchStrategy } from './GenreSearchStrategy';
 import { IMovieSearchStrategy } from './IMovieSearchStrategy';
 import { RandomSearchStrategy } from './RandomSearchStrategy';

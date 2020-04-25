@@ -9,6 +9,7 @@
     "watch-ts": "tsc -w",
     "server": "node dist/index.js",
     "integration-tests": "mocha -r ts-node/register integrationTests/Movies.spec.js",
+    "unit-tests": "mocha -r ts-node/register unitTests/*.spec.ts",
     "lint": "tslint src/**/*.{ts,tsx}"
   },
   "devDependencies": {
@@ -17,7 +18,7 @@
     "@types/inversify": "^2.0.33",
     "@types/js-yaml": "^3.12.1",
     "@types/mocha": "^5.2.7",
-    "@types/pino": "^5.8.6",
+    "@types/pino": "^6.0.0",
     "@types/yup": "^0.26.12",
     "chai": "^4.2.0",
     "chakram": "^1.5.0",
@@ -38,8 +39,18 @@
     "pino": "^5.12.0",
     "pino-pretty": "^2.6.0",
     "reflect-metadata": "^0.1.13",
+    "sinon": "^9.0.2",
     "uuidv4": "^6.0.7",
     "yup": "^0.28.3"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "db/*",
+      "integrationTests/*",
+      "unitTests/*",
+      "logs/*"
+    ],
+    "delay": "2500"
   },
   "author": "Seweryn Markowicz",
   "license": "MIT"

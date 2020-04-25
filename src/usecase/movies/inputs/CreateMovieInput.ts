@@ -1,9 +1,9 @@
 import { uuid } from 'uuidv4';
 import * as yup from 'yup';
 import { setLocale } from 'yup';
-import { AbstractHttpInput } from '../../http/AbstractHttpInput';
-import { IValidationErrorResult } from '../../http/IValidationErrorResult';
-import { IValidationResult } from '../../http/IValidationResult';
+import { AbstractHttpInput } from '../../../http/AbstractHttpInput';
+import { IValidationErrorResult } from '../../../http/IValidationErrorResult';
+import { IValidationResult } from '../../../http/IValidationResult';
 
 setLocale({
     number: {
@@ -27,7 +27,7 @@ export class CreateMovieInput extends AbstractHttpInput {
     ) {
         super();
         this.schema = yup.object().shape({
-            genres: yup.array().of(yup.string()),
+            genres: yup.array().of(yup.string()).required(),
             title: yup.string().required().max(255),
             year: yup.number().required().min(1895),
             runtime: yup.number().required(),
@@ -54,7 +54,7 @@ export class CreateMovieInput extends AbstractHttpInput {
     }
 
     public validateValues(movieGenres: string[]): Promise<IValidationResult> {
-        const validGenres = this.genres.reduce((prev: boolean, current: string) => {
+        const validGenres = (this.genres || []).reduce((prev: boolean, current: string) => {
             return prev && movieGenres.includes(current);
         }, true);
         if (!validGenres) {

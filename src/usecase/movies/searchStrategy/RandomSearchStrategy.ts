@@ -1,5 +1,5 @@
+import { IMovie } from '../../../models/IMovie';
 import { IMovieFilter } from '../filters/IMovieFilter';
-import { IMovie } from '../MoviesRepository';
 import { IMovieSearchStrategy } from './IMovieSearchStrategy';
 
 export class RandomSearchStrategy implements IMovieSearchStrategy {

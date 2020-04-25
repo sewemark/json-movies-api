@@ -1,35 +1,14 @@
 import { inject, injectable } from 'inversify';
 import { UnableToCommitChanges } from '../../errors/UnableToCommitChanges';
 import { ILogger } from '../../logger/ILogger';
+import { IMovie } from '../../models/IMovie';
+import { IPersiter } from '../../persister/Persiter';
 import { Types } from '../../Types';
-import { CreateMovieInput } from './CreateMovieInput';
-import { IPersiter } from './Persiter';
-
-export interface IDBSchema {
-    movies: IMovie[];
-    genres: string[];
-}
-
-export interface IMovie {
-    genres: string[];
-    title: string;
-    year: number;
-    runtime: number;
-    director: string;
-    actors: string;
-    plot: string;
-    posterUrl: string;
-}
-
-export interface IMoviesRepository {
-    init(): Promise<void>;
-    create(createMovieInput: CreateMovieInput): Promise<void>;
-    find(): Promise<IMovie[]>;
-    movieGenres(): Promise<string[]>;
-}
+import { IMoviesRepository } from './IMoviesRepository';
+import { CreateMovieInput } from './inputs/CreateMovieInput';
 
 @injectable()
-export class MoviesRepository {
+export class MoviesRepository implements IMoviesRepository {
     private readonly logger: ILogger;
     private readonly persiter: IPersiter;
     private movies: IMovie[];

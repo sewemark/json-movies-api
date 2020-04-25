@@ -1,14 +1,13 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { InvalidInputError } from '../../errors/InvalidInputError';
-import { UnableToCommitChanges } from '../../errors/UnableToCommitChanges';
 import { ILogger } from '../../logger/ILogger';
 import { Types } from '../../Types';
-import { CreateMovieInput } from './CreateMovieInput';
 import { MovieDurationFilter } from './filters/MovieDurationFilter';
-import { GetByGenreAndDurationInput } from './GetByGenreAndDurationInput';
+import { IMoviesRepository } from './IMoviesRepository';
+import { CreateMovieInput } from './inputs/CreateMovieInput';
+import { GetByGenreAndDurationInput } from './inputs/GetByGenreAndDurationInput';
 import { IUseCaseResult } from './IUseCaseResult';
-import { IMoviesRepository } from './MoviesRepository';
 import { MoviesSearchStrategyProvider } from './searchStrategy/MoviesSearchStrategyProvider';
 
 export interface IMoviesUseCase {
@@ -56,6 +55,7 @@ export class MoviesUseCase implements IMoviesUseCase {
         const movieGenres = await this.moviesRepository.movieGenres();
         const validationResult = await movieInput.validate();
         const valuesValidationResult = await movieInput.validateValues(movieGenres);
+
         if (!validationResult.valid || !valuesValidationResult.valid) {
             this.logger.warn('MoviesUseCase', 'create', 'Invalid movie input schema data');
             throw new InvalidInputError([...validationResult.errorResults || [],
@@ -67,6 +67,7 @@ export class MoviesUseCase implements IMoviesUseCase {
                 success: true,
             });
         } catch (err) {
+            console.log(err);
             this.logger.error('MoviesUseCase', 'create', err, `Unable to create movie`);
             throw err;
         }

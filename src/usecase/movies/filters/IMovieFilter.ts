@@ -1,4 +1,4 @@
-import { IMovie } from '../MoviesRepository';
+import { IMovie } from '../../../models/IMovie';
 
 export interface IMovieFilter {
     filter(movie: IMovie): boolean;

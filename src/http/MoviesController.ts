@@ -5,8 +5,8 @@ import { InvalidInputError } from '../errors/InvalidInputError';
 import { UnableToLoadDbDataError } from '../errors/UnableToLoadDbDataError';
 import { ILogger } from '../logger/ILogger';
 import { Types } from '../Types';
-import { CreateMovieInput } from '../usecase/movies/CreateMovieInput';
-import { GetByGenreAndDurationInput } from '../usecase/movies/GetByGenreAndDurationInput';
+import { CreateMovieInput } from '../usecase/movies/inputs/CreateMovieInput';
+import { GetByGenreAndDurationInput } from '../usecase/movies/inputs/GetByGenreAndDurationInput';
 import { MoviesUseCase } from '../usecase/movies/MoviesUseCase';
 import { HttpError } from './HttpError';
 

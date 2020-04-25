@@ -1,16 +1,17 @@
+import * as path from 'path';
 import { ILogger } from '../logger/ILogger';
 
 export class ServerConfig {
     private _port: number = 8080;
-    private _databaseConnectionString: string = 'connectionstring';
+    private _databaseFilePath: string = path.join(__dirname, '..', '..', 'db', 'db.json');
     private logger: ILogger;
 
     public get port(): number {
         return this._port;
     }
 
-    public get databaseConnectionString(): string {
-        return this._databaseConnectionString;
+    public get databaseFilePath(): string {
+        return this._databaseFilePath;
     }
 
     constructor(logger: ILogger) {
@@ -20,7 +21,7 @@ export class ServerConfig {
     public serialize(): any {
         return {
             port: this.port,
-            databaseConnectionString: this.databaseConnectionString,
+            databaseFilePath: this.databaseFilePath,
         };
     }
 
@@ -35,14 +36,14 @@ export class ServerConfig {
             );
         }
 
-        if (config.databaseConnectionString && typeof config.databaseConnectionString === 'string') {
-            this._databaseConnectionString = config.databaseConnectionString;
+        if (config.databaseFilePath && typeof config.databaseFilePath === 'string') {
+            this._databaseFilePath = config.databaseFilePath;
         } else {
             this.logger.info(
                 'ServerConfig',
                 'deserialize',
-                `Invalid connection string value ${config.databaseConnectionString},
-                 using default value ${this.databaseConnectionString}`,
+                `Invalid database file path value ${config.databaseFilePath},
+                 using default value ${this.databaseFilePath}`,
             );
         }
     }

@@ -7,4 +7,5 @@ export const Types = {
     Persiter: Symbol.for('Persiter'),
     MessageBus: Symbol.for('EventEmitter'),
     PersiterLock: Symbol.for('PersiterLock'),
+    ServerConfig: Symbol.for('ServerConfig'),
 };
