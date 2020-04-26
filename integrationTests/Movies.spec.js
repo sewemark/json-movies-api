@@ -15,7 +15,6 @@ describe('Movies api tests', function () {
         });
         expect(response).to.have.status(400);
         expect(response.body.message).to.be.an('array');
-        console.log(response.body);
         expect(response.body.message.findIndex(x => x.fieldName === 'genres')).to.be.above(-1);
         return chakram.wait();
     });
@@ -192,7 +191,6 @@ describe('Movies api tests', function () {
             },
         });
         expect(response).to.have.status(200);
-        console.log(response.body);
         return chakram.wait();
     });
 
@@ -299,7 +297,6 @@ describe('Movies api tests', function () {
                 'Content-Type': 'application/json',
             },
         });
-        console.log(response.body);
         expect(response).to.have.status(400);
         expect(response.body.message).to.be.an('array');
         expect(response.body.message.findIndex(x => x.fieldName === 'genres')).to.be.above(-1);
