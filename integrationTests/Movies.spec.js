@@ -3,7 +3,7 @@ const expect = chakram.expect;
 
 describe('Movies api tests', function () {
     const baseAddress = 'http://localhost:8888';
-    this.timeout(20000);
+
     it('should return 400 when no genres provided', async () => {
         const response = await chakram.post(`${baseAddress}/movies`, {
             title: 'Do utraty tchu',
@@ -50,7 +50,6 @@ describe('Movies api tests', function () {
         expect(response.body.message.findIndex(x => x.fieldName === 'year')).to.be.above(-1);
         return chakram.wait();
     });
-
 
     it('should return 400 when no runtime provided', async () => {
         const response = await chakram.post(`${baseAddress}/movies`, {
@@ -197,6 +196,18 @@ describe('Movies api tests', function () {
         return chakram.wait();
     });
 
+    it('should return random movie when no param provided', async () => {
+        const response = await chakram.get(`${baseAddress}/movies`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        expect(response).to.have.status(200);
+        expect(response.body).to.be.an('array').lengthOf(1);
+        return chakram.wait();
+    });
+
+
     it('should return random movie when only duration provided', async () => {
         const response = await chakram.get(`${baseAddress}/movies`, {
             qs: {
@@ -208,7 +219,22 @@ describe('Movies api tests', function () {
             },
         });
         expect(response).to.have.status(200);
-        console.log(response.body);
+        expect(response.body).to.be.an('array').lengthOf(1);
+        return chakram.wait();
+    });
+
+    it('should return empty array not existing duration provided', async () => {
+        const response = await chakram.get(`${baseAddress}/movies`, {
+            qs: {
+                duration: 1,
+            }
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        expect(response).to.have.status(200);
+        expect(response.body).to.be.an('array').lengthOf(0);
         return chakram.wait();
     });
 
@@ -280,15 +306,3 @@ describe('Movies api tests', function () {
         return chakram.wait();
     });
 });
-
-/*
-
-- a list of genres (only predefined ones from db file) (required, array of predefined strings)
-- title (required, string, max 255 characters)
-- year (required, number)
-- runtime (required, number)
-- director (required, string, max 255 characters)
-- actors (optional, string)
-- plot (optional, string)
-- posterUrl (optional, string)
-*/

@@ -62,12 +62,12 @@ export class MoviesUseCase implements IMoviesUseCase {
             ...valuesValidationResult.errorResults || []]);
         }
         try {
-            await this.moviesRepository.create(movieInput);
+            const createdMovie = await this.moviesRepository.create(movieInput);
             return Promise.resolve({
                 success: true,
+                data: createdMovie,
             });
         } catch (err) {
-            console.log(err);
             this.logger.error('MoviesUseCase', 'create', err, `Unable to create movie`);
             throw err;
         }

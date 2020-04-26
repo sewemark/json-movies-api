@@ -44,7 +44,7 @@ export class Persiter implements IPersiter {
     public save(dbSchema: IDBSchema, retryCount = 0): void {
         try {
             if (!this.canAccessFile(retryCount) || this.persiterLock.locked) {
-                this.logger.warn('Persiter', 'save', 'Cannot access file retry in 100ms...');
+                this.logger.warn('Persiter', 'save', 'Cannot access db file, retry in 100ms...');
                 setTimeout(() => {
                     this.save(dbSchema, retryCount + 1);
                 }, 100);

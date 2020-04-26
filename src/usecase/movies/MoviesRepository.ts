@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { UnableToCommitChanges } from '../../errors/UnableToCommitChanges';
+import { UnableToCommitChanges } from '../../errors/UnableToCommitChangesError';
 import { ILogger } from '../../logger/ILogger';
 import { IMovie } from '../../models/IMovie';
 import { IPersiter } from '../../persister/Persiter';
@@ -31,16 +31,18 @@ export class MoviesRepository implements IMoviesRepository {
         this.inited = true;
     }
 
-    public async create(createMovieInput: CreateMovieInput): Promise<void> {
+    public async create(createMovieInput: CreateMovieInput): Promise<IMovie> {
         try {
             if (!this.inited) {
                 await this.init();
             }
-            this.movies.push(createMovieInput.serialize());
+            const newMovie = createMovieInput.serialize();
+            this.movies.push(newMovie);
             await this.persiter.save({
                 movies: this.movies,
                 genres: this.genres,
             });
+            return newMovie;
         } catch (err) {
             this.logger.error('MoviesRepository', 'create', err, `Unable to create new movie ${createMovieInput}`);
             throw new UnableToCommitChanges();

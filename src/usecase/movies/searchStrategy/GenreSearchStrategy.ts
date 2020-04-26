@@ -44,7 +44,7 @@ export class GenreSearchStrategy implements IMovieSearchStrategy {
 
     private sortResultMovies(result: any) {
         const orderdMoviesResult: IMovie[] = [];
-        const keys = Object.keys(result).sort((a, b) => Number(a) - Number(b));
+        const keys = Object.keys(result).sort((a, b) => Number(b) - Number(a));
         keys.forEach((key) => {
             orderdMoviesResult.push(...result[key]);
         });

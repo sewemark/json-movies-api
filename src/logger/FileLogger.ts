@@ -9,7 +9,6 @@ export class FileLogger implements ILogger {
     private pinoLogger: any;
 
     constructor(filePath: string) {
-        
         this.pinoLogger = Pino(fs.createWriteStream(filePath, { flags: 'w' }));
     }
 

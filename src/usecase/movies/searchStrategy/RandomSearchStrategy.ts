@@ -12,10 +12,11 @@ export class RandomSearchStrategy implements IMovieSearchStrategy {
     public search(movies: IMovie[]): IMovie[] {
         const filteredMovies = this.applyFilters(movies);
         const randomIndex = this.randomNumber(0, filteredMovies.length);
+        console.log(randomIndex);
         if (filteredMovies[randomIndex]) {
             return [filteredMovies[randomIndex]];
         } else {
-            return null;
+            return [];
         }
     }
 
@@ -27,6 +28,6 @@ export class RandomSearchStrategy implements IMovieSearchStrategy {
     }
 
     private randomNumber(min: number, max: number) {
-        return Math.random() * (max - min) + min;
+        return Math.floor(Math.random() * (max - min) + min);
     }
 }
