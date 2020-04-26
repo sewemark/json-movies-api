@@ -1,10 +1,9 @@
 import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 import { Express, Request, Response } from 'express';
 import { ServerConfig } from './config/ServerConfig';
 import { MoviesController } from './http/MoviesController';
 import { ILogger } from './logger/ILogger';
-
-const cors = require('cors');
 
 export class ApiServer {
     private logger: ILogger;
