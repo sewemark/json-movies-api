@@ -74,21 +74,21 @@ describe('GenreSearchStrategy tests', () => {
         expect(result).to.have.length(0);
     });
 
-    it('should return 4 result', async () => {
+    it('should return 1 result for Comedy and Western', async () => {
         const test = new GenreSearchStrategy(['Comedy', 'Western'], []);
         const result = test.search(mockedMovies);
         expect(result).to.be.an('array');
-        expect(result).to.have.length(4);
+        expect(result).to.have.length(1);
     });
 
-    it('should return 3 result', async () => {
+    it('should return 1 result for Western', async () => {
         const test = new GenreSearchStrategy(['Western'], []);
         const result = test.search(mockedMovies);
         expect(result).to.be.an('array');
-        expect(result).to.have.length(3);
+        expect(result).to.have.length(1);
     });
 
-    it('should return 3 result', async () => {
+    it('should return 3 result for Comedy, Western and Drama ', async () => {
         const test = new GenreSearchStrategy(['Comedy', 'Western', 'Drama'], []);
         const result = test.search(mockedMovies);
         expect(result).to.be.an('array');

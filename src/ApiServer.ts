@@ -1,5 +1,5 @@
 import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
+import cors from 'cors';
 import { Express, Request, Response } from 'express';
 import { ServerConfig } from './config/ServerConfig';
 import { MoviesController } from './http/MoviesController';
@@ -41,6 +41,9 @@ export class ApiServer {
         });
         this.app.get('/movies', this.moviesController.get.bind(this.moviesController));
         this.app.post('/movies', this.moviesController.post.bind(this.moviesController));
+        this.app.all('*', (req: Request, res: Response, next: any) => {
+            res.status(404).send('Not found');
+        });
         this.app.use((err: any, req: Request, res: Response, next: any) =>
             res.status(422).send({ error: err.message }));
     }
