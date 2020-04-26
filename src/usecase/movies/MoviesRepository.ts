@@ -33,9 +33,7 @@ export class MoviesRepository implements IMoviesRepository {
 
     public async create(createMovieInput: CreateMovieInput): Promise<IMovie> {
         try {
-            if (!this.inited) {
-                await this.init();
-            }
+            await this.init();
             const newMovie = createMovieInput.serialize();
             this.movies.push(newMovie);
             await this.persiter.save({
@@ -50,9 +48,7 @@ export class MoviesRepository implements IMoviesRepository {
     }
 
     public async find(): Promise<IMovie[]> {
-        if (!this.inited) {
-            await this.init();
-        }
+        await this.init();
         return this.movies;
     }
 
